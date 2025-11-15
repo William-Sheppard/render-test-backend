@@ -40,8 +40,8 @@ app.get('/', function (req, res) {
   res.send('hello, world!')
 })
 
-app.get('/api/persons/', (request, response) => {
-    response.json(persons)
+app.get('/api/persons/', (req, res) => {
+    res.json(persons)
 })
 
 app.get('/info', (request, response) => {
@@ -69,20 +69,13 @@ app.get('/info', (request, response) => {
 app.get('/api/persons/:id', (req, res) => {
     let id = req.params.id
     let entry = persons.find(person => person.id === id)
-    if (entry) {
-        res.send(`
-        <div>Name: ${entry.name}</div>
-        <div>Number: ${entry.number}</div>
-    `)
-    } else {
-        res.status(404).end()
-    }
+    entry ? res.json(entry) : res.status(404).end()
 })
 
 app.delete('/api/persons/:id', (req, res) => {
     let id = req.params.id
-    notes = persons.filter(person => person.id !== id)
-    console.log(notes)
+    persons = persons.filter(person => person.id !== id)
+    console.log(persons)
     res.status(204).end()
 })
 
@@ -99,15 +92,15 @@ app.post('/api/persons', (req, res) => {
     let newId = persons.length > 0 
         ? Math.max(...persons.map(person => person.id)) + 1 
         : 0
-    
+
     const newPerson = {
-        id: newId,
+        id: String(newId),
         name: reqBody.name,
         number: reqBody.number
     }
 
     persons = persons.concat(newPerson)
-    res.json(persons)
+    res.json(newPerson)
 })
 
 const PORT = process.env.PORT || 3001
