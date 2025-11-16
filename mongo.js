@@ -39,22 +39,22 @@ if (process.argv.length === 3) {
     mongoose.connection.close()
   })
 } else if (process.argv.length === 5) {
-    Person.find({})
-      .then(result => {
-        return result.length > 0 
-        ? Math.max(...result.map(person => person.id)) + 1 
+  Person.find({})
+    .then(result => {
+      return result.length > 0
+        ? Math.max(...result.map(person => person.id)) + 1
         : 0
+    })
+    .then(newId => {
+      let person = new Person({
+        id: String(newId),
+        name: process.argv[3],
+        number: process.argv[4],
       })
-      .then(newId => {
-        let person = new Person({
-            id: String(newId),
-            name: process.argv[3],
-            number: process.argv[4],
-        })
 
-        person.save().then(result => {
-          console.log(`added ${process.argv[3]} number ${process.argv[4]} to phonebook`)
-          mongoose.connection.close()
-        })
+      person.save().then(() => {
+        console.log(`added ${process.argv[3]} number ${process.argv[4]} to phonebook`)
+        mongoose.connection.close()
       })
+    })
 }
